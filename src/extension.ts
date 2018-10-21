@@ -77,27 +77,41 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.withProgress({
                     location: vscode.ProgressLocation.Notification,
                     title: "downloading " + filename,
-                    cancellable: false
+                    cancellable: true
                 }, (progress, token) => {
                     let percent = 0;
                     let transferred = 0;
                     progress.report({ increment: 0 });
                     return new Promise(resolve => {
-                        got.stream(uri.toString())
-                            .on('downloadProgress', p => {
-                                if (percent < Math.floor(p.percent * 100)) {
-                                    percent = Math.floor(p.percent * 100);
-                                    let incr = p.total > 0 ? (p.transferred - transferred) / p.total : 0;
-                                    progress.report({increment: incr * 100, message: `${Math.floor(percent)}%`})
-                                    transferred = p.transferred;
-                                }
-                            })
-                            .pipe(fs.createWriteStream(filepath))
-                            .on('finish', () => {
-                                resolve();
-                                let fileUri = vscode.Uri.file(filepath);
-                                vscode.commands.executeCommand('vscode.open', fileUri);
+                        let cancelled = false;
+
+                        let stream = got.stream(uri.toString(), {timeout: {connect: 10000, socket: 10000}});
+                        let fileStream = stream.pipe(fs.createWriteStream(filepath));
+                        
+                        token.onCancellationRequested(() => {
+                            cancelled = true;
+                            stream.pause();
+                            stream.end(() => {
+                                console.log('stream cancelled end');
+                                fileStream.close();
                             });
+                        });
+
+                        stream.on('downloadProgress', p => {
+                            if (percent < Math.floor(p.percent * 100)) {
+                                percent = Math.floor(p.percent * 100);
+                                let incr = p.total > 0 ? (p.transferred - transferred) / p.total : 0;
+                                progress.report({increment: incr * 100, message: `${Math.floor(percent)}%`})
+                                transferred = p.transferred;
+                            }
+                        });
+                        fileStream.on('finish', () => {
+                            resolve();
+                            let fileUri = vscode.Uri.file(filepath);
+                            vscode.commands.executeCommand('vscode.open', fileUri);
+                        });
+
+
                     }); 
                 })
             });
