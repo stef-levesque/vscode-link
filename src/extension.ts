@@ -55,7 +55,37 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
-    context.subscriptions.push(disposable1, registration);
+    let disposable2 = vscode.commands.registerCommand('extension.downloadLink', () => {
+        if (vscode.workspace.rootPath == undefined) {
+            return;
+        }
+        var ibo = <vscode.InputBoxOptions>{
+            prompt: "url to download",
+            placeHolder: "https://...",
+            ignoreFocusOut: true
+        }
+        vscode.window.showInputBox(ibo).then(link => {
+            if (!link) {
+                return;
+            }
+            var uri = vscode.Uri.parse(link);
+            ibo.value = path.basename(uri.toString());
+            ibo.prompt = "filename";
+            ibo.placeHolder = "filename";
+            vscode.window.showInputBox(ibo).then(filename => {
+                var filepath = path.join(vscode.workspace.rootPath, filename)
+                got.stream(uri.toString())
+                    .on('downloadProgress', p => { console.log(p) })
+                    .pipe(fs.createWriteStream(filepath))
+                    .on('finish', () => {
+                        let fileUri = vscode.Uri.file(filepath);
+                        vscode.commands.executeCommand('vscode.open', fileUri);
+                    });
+            });
+        });
+    });
+
+    context.subscriptions.push(disposable2, disposable1, disposable0, registration);
 }
 
 export function deactivate() {

@@ -22,18 +22,19 @@
     "vscode": "^1.28.2"
   },
   "keywords": [
-      "vscode",
-      "link",
-      "curl",
-      "http"
-    ],
+    "vscode",
+    "link",
+    "curl",
+    "http",
+    "download"
+  ],
   "categories": [
-    "Productivity",
     "Other"
   ],
   "activationEvents": [
     "onCommand:extension.openLink",
     "onCommand:extension.previewLink",
+    "onCommand:extension.downloadLink"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -45,6 +46,10 @@
       {
         "command": "extension.previewLink",
         "title": "link: Preview link in editor"
+      },
+      {
+        "command": "extension.downloadLink",
+        "title": "link: Download link in the workspace folder"
       }
     ]
   },
