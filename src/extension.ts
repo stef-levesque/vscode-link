@@ -1,9 +1,9 @@
 'use strict';
 import * as vscode from 'vscode';
 
-const got = require('got');
-const path = require('path');
-const fs = require('fs');
+import got = require('got');
+import path = require('path');
+import fs = require('fs');
 
 export function activate(context: vscode.ExtensionContext) {
     const linkScheme = "http-link";
