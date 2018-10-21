@@ -74,13 +74,32 @@ export function activate(context: vscode.ExtensionContext) {
             ibo.placeHolder = "filename";
             vscode.window.showInputBox(ibo).then(filename => {
                 var filepath = path.join(vscode.workspace.rootPath, filename)
-                got.stream(uri.toString())
-                    .on('downloadProgress', p => { console.log(p) })
-                    .pipe(fs.createWriteStream(filepath))
-                    .on('finish', () => {
-                        let fileUri = vscode.Uri.file(filepath);
-                        vscode.commands.executeCommand('vscode.open', fileUri);
-                    });
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: "downloading " + filename,
+                    cancellable: false
+                }, (progress, token) => {
+                    let percent = 0;
+                    let transferred = 0;
+                    progress.report({ increment: 0 });
+                    return new Promise(resolve => {
+                        got.stream(uri.toString())
+                            .on('downloadProgress', p => {
+                                if (percent < Math.floor(p.percent * 100)) {
+                                    percent = Math.floor(p.percent * 100);
+                                    let incr = p.total > 0 ? (p.transferred - transferred) / p.total : 0;
+                                    progress.report({increment: incr * 100, message: `${Math.floor(percent)}%`})
+                                    transferred = p.transferred;
+                                }
+                            })
+                            .pipe(fs.createWriteStream(filepath))
+                            .on('finish', () => {
+                                resolve();
+                                let fileUri = vscode.Uri.file(filepath);
+                                vscode.commands.executeCommand('vscode.open', fileUri);
+                            });
+                    }); 
+                })
             });
         });
     });
