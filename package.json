@@ -32,7 +32,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.openLink"
+    "onCommand:extension.openLink",
+    "onCommand:extension.previewLink",
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -40,6 +41,10 @@
       {
         "command": "extension.openLink",
         "title": "link: Open link in editor (read-only)"
+      },
+      {
+        "command": "extension.previewLink",
+        "title": "link: Preview link in editor"
       }
     ]
   },

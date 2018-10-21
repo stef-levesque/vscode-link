@@ -29,6 +29,19 @@ export function activate(context: vscode.ExtensionContext) {
     let provider = new LinkContentProvider();
     let registration = vscode.workspace.registerTextDocumentContentProvider(linkScheme, provider);
 
+    let disposable0 = vscode.commands.registerCommand('extension.previewLink', () => {
+        let ibo = <vscode.InputBoxOptions>{
+            prompt: "url to preview",
+            placeHolder: "https://..."
+        }
+        vscode.window.showInputBox(ibo).then( async (link) => {
+            let webPanel = vscode.window.createWebviewPanel('PreviewHtml', 'Preview Link', -1, {enableFindWidget: true, enableScripts: true });
+            const response = await got(link);
+            webPanel.webview.html = response.body;
+            webPanel.reveal();
+        });
+    });
+
     let disposable1 = vscode.commands.registerCommand('extension.openLink', () => {
         var ibo = <vscode.InputBoxOptions>{
             prompt: "url to download",
