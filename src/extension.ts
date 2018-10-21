@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
                         let cancelled = false;
 
                         let stream = got.stream(uri.toString(), {timeout: {connect: 10000, socket: 10000}});
-                        let fileStream = stream.pipe(fs.createWriteStream(filepath));
+                        let fileStream = stream.pipe(fs.createWriteStream(filepath + '.download'));
                         
                         token.onCancellationRequested(() => {
                             cancelled = true;
@@ -105,15 +105,41 @@ export function activate(context: vscode.ExtensionContext) {
                                 transferred = p.transferred;
                             }
                         });
-                        fileStream.on('finish', () => {
-                            resolve();
-                            let fileUri = vscode.Uri.file(filepath);
-                            vscode.commands.executeCommand('vscode.open', fileUri);
+
+                        fileStream.on('close', () => {
+                            const yes: vscode.MessageItem = { title: "Yes" };
+                            const no: vscode.MessageItem = { isCloseAffordance: true, title: "No" };
+                            if (cancelled) {
+                                vscode.window.showWarningMessage("Download cancelled. Delete file?", yes, no).then(v => {
+                                    if (v === yes) {
+                                        fs.unlink(filepath + '.download', (e) => {
+                                            if (e) {
+                                                console.log(e);
+                                            }
+                                            resolve();
+                                        });
+                                    }
+                                });
+                            } else {
+                                fs.rename(filepath + '.download', filepath, (err) => {
+                                    if (err) {
+                                        vscode.window.showErrorMessage("Could not rename file \"" + filepath + "\"");
+                                    } 
+                                    else {
+                                        vscode.window.showInformationMessage("Download completed. Open file?", yes, no).then(v => {
+                                            if (v === yes) {
+                                                let fileUri = vscode.Uri.file(filepath);
+                                                vscode.commands.executeCommand('vscode.open', fileUri);
+                                            }
+                                        });
+                                    }
+
+                                    resolve();
+                                });
+                            }
                         });
-
-
-                    }); 
-                })
+                    });
+                });
             });
         });
     });
