@@ -33,6 +33,7 @@
   ],
   "activationEvents": [
     "onCommand:extension.openLink",
+    "onCommand:extension.openPath",
     "onCommand:extension.previewLink",
     "onCommand:extension.downloadLink"
   ],
@@ -42,6 +43,10 @@
       {
         "command": "extension.openLink",
         "title": "link: Open link in editor (read-only)"
+      },
+      {
+        "command": "extension.openPath",
+        "title": "link: Open path in editor"
       },
       {
         "command": "extension.previewLink",

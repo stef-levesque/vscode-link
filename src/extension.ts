@@ -85,7 +85,18 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
-    context.subscriptions.push(disposable2, disposable1, disposable0, registration);
+    let disposable3 = vscode.commands.registerCommand('extension.openPath', () => {
+        var ibo = <vscode.InputBoxOptions>{
+            prompt: "path to open",
+            placeHolder: "/path/to/open"
+        }
+        vscode.window.showInputBox(ibo).then(link => {
+            var uri = vscode.Uri.file(link);
+            vscode.commands.executeCommand('vscode.open', uri);
+        });
+    });
+
+    context.subscriptions.push(disposable3, disposable2, disposable1, disposable0, registration);
 }
 
 export function deactivate() {
