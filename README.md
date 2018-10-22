@@ -1,8 +1,7 @@
 # vscode-link
 
 [![GitHub issues](https://img.shields.io/github/issues/stef-levesque/vscode-link.svg)](https://github.com/stef-levesque/vscode-link/issues)
-[![GitHub license button](https://img.shields.io/github/license/stef-levesque/vscode-link.svg)](https://github.com/stef-levesque/vscode-link/blob/master/LICENSE.md)
-[![VS Code marketplace button](http://vsmarketplacebadge.apphb.com/installs/slevesque.vscode-link.svg)](https://marketplace.visualstudio.com/items?itemName=slevesque.vscode-link)
+[![VS Code marketplace button](https://vsmarketplacebadge.apphb.com/installs/slevesque.vscode-link.svg)](https://marketplace.visualstudio.com/items?itemName=slevesque.vscode-link)
 [![Gitter chat button](https://img.shields.io/gitter/room/stef-levesque/vscode-link.svg)](https://gitter.im/stef-levesque/vscode-link)
 
 Link utilities for Visual Studio Code
@@ -14,10 +13,13 @@ Open a link directly in vscode
 ## Commands
 
 * `openLink` Open link in editor (read-only)
+* `openPath` Open path in editor
+* `previewLink` Preview link in editor
+* `downloadLink` Download link in the workspace folder
 
 ## Installation
 
-1. Install *Visual Studio Code* (1.6.0 or higher)
+1. Install *Visual Studio Code* (1.28.0 or higher)
 2. Launch *Code*
 3. From the command palette `Ctrl-Shift-P` (Windows, Linux) or `Cmd-Shift-P` (OSX)
 4. Select `Install Extensions`
@@ -34,7 +36,7 @@ Open a link directly in vscode
 
 ## Requirements
 
-Visual Studio Code v1.6.0
+Visual Studio Code v1.28
 
 ## Credits
 
@@ -50,8 +52,13 @@ Visual Studio Code v1.6.0
 
 ## Changelog
 
+### [1.0.0] 2018-10-21
+
+* previewLink & downloadLink
+
 ### [0.0.1] 2016-06-01
 
 * Open a link from VSCode
 
 [0.0.1]: https://github.com/stef-levesque/vscode-link/commit/master
+[0.1.0]: https://github.com/stef-levesque/vscode-link/compare/eb65d35e7f87b3dcd180fe5ef12b605272fd9ab5...274ebf3de7423d72f3c8767290e5e8f42dfe3809
